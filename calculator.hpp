@@ -49,8 +49,11 @@ int countSetBits(int n);
 // A template function
 template<typename T>
 T findSmaller(T a, T b) {
-    // This is a conditional expression that should be caught by the query
-    return (a < b) ? a : b;
+    if (a < b) { // Cond (if_statement)
+        return a;
+    } else {
+        return b;
+    }
 }
 
 // Another template function with different structure

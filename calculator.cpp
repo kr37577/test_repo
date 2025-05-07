@@ -63,8 +63,15 @@ void Calculator::recordOperation(const std::string& operationName) {
 }
 
 void Calculator::add(double value) {
-    currentValue_ += value; // Assignment
-    recordOperation("add"); // Call
+    if (value == 0.0) { // <<< Cond +1
+        recordOperation("add_zero_value"); // <<< Call +1
+        return; // No change to currentValue_
+    }
+    currentValue_ += value; // Assign (変更なし)
+    recordOperation("add"); // Call (変更なし)
+    if (currentValue_ > 10000.0 && value > 0) { // <<< Cond +1 (&&は1つのif_statement)
+        if (logger_) logger_->logMessage("Current value exceeded 10000 after addition!"); // <<< Cond +1, Call +1
+    }
 }
 
 void Calculator::subtract(double value) {
@@ -119,56 +126,18 @@ bool Calculator::isValuePositive() const {
 }
 
 long long Calculator::sumUpToN(int n) {
-    recordOperation("sumUpToN"); // Call
-    long long sum = 0LL; // Assignment
-    int i = 1;       // Assignment
+    recordOperation("sumUpToN_v2_simplified"); // Call (文字列変更)
+    long long sum = 0LL; // Assign (変更なし)
 
-    if (n < 1) { // Condition
-        if (logger_) logger_->logMessage("N is less than 1 for sumUpToN, returning 0."); // Condition, Call
+    if (n < 1) { // Cond (変更なし)
+        if (logger_) logger_->logMessage("N is less than 1 for sumUpToN (v2), returning 0."); // Cond, Call (変更なし)
         return 0LL;
     }
-
-    // For loop: should be captured by (for_statement)
-    // initializer: int i = 1 (implicit assignment)
-    // condition: i <= n
-    // increment: ++i (implicit assignment)
-    for (i = 1; i <= n; ++i) {
-        sum += i; // Assignment
+    // Simple loop only
+    for (int i = 1; i <= n; ++i) { // Cond (for_statement)
+        sum += i; // Assign (+=)
     }
-
-    // While loop example
-    int countdown = n; // Assignment
-    while (countdown > (n / 2) && countdown > 0) { // Condition (while_statement), with &&
-        sum -= 1;       // Assignment
-        countdown--;    // Assignment
-        if (countdown % 5 == 0) { // Condition
-            recordOperation("Summing down, multiple of 5 reached in while"); // Call
-        }
-    }
-
-    // Do-while loop example
-    int guard = 0; // Assignment
-    do {
-        sum++; // Assignment
-        guard++; // Assignment
-    } while (guard < 0); // Condition (do_statement), loop runs once
-
-    // Switch statement example
-    switch (n % 3) { // Condition (switch_statement)
-        case 0:
-            sum += 100; // Assignment
-            recordOperation("Switch case 0 for sumUpToN"); // Call
-            break;
-        case 1:
-            sum *= 1; // Assignment (trivial, but still an op)
-            // No call here
-            break;
-        // case 2: // Intentionally missing case 2 for some tests
-        default:
-            sum -= 5; // Assignment
-            recordOperation("Switch default for sumUpToN"); // Call
-            break;
-    }
+    // Removed while, do-while, and switch statements from previous version
     return sum;
 }
 
@@ -229,6 +198,14 @@ int countSetBits(int n) {
         bitCount++;   // Assignment
     }
     return bitCount;
+}
+
+void Calculator::multiplyByTwo() {
+    recordOperation("multiplyByTwo"); // Call +1
+    this->currentValue_ *= 2;      // Assign +1
+    if (this->currentValue_ == 0) { // Cond +1
+        recordOperation("multiplyByTwo_resulted_in_zero"); // Call +1
+    }
 }
 
 } // namespace MyProject
